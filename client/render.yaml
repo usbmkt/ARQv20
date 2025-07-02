@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: arq6-frontend
+    env: static
+    buildCommand: echo "Build completed"
+    staticPublishPath: ./
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /public/index.html
+    envVars:
+      - key: API_URL
+        value: https://arqv10.onrender.com
+

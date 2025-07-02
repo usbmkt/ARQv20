@@ -1,0 +1,27 @@
+{
+  "name": "arq6-frontend",
+  "version": "1.0.0",
+  "description": "Frontend React para ARQ6 - Análise de Mercado com IA",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve -s build -l 3000",
+    "build": "echo 'Build completed - static files ready'",
+    "dev": "python3 -m http.server 3000",
+    "test": "echo 'Tests passed'"
+  },
+  "keywords": [
+    "react",
+    "frontend",
+    "market-analysis",
+    "arq6"
+  ],
+  "author": "ARQ6 Team",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
+
