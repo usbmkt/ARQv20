@@ -1,22 +1,22 @@
 // Todos os componentes (Header, Pages) e libs (React, ReactRouterDOM)
 // são carregados como globais pelo index.html.
-// Portanto, não usamos 'import'.
-
-const { BrowserRouter: Router, Route, Routes, Navigate } = ReactRouterDOM;
-const { useState, useEffect } = React;
 
 function App() {
-    // A função checkAuth() deve vir do auth.js e estar no escopo global
+    // Desestruturando React e ReactRouterDOM dentro da função para garantir
+    // que as bibliotecas já existam no escopo global quando o componente for executado.
+    const { useState } = React;
+    const { BrowserRouter: Router, Route, Routes, Navigate } = ReactRouterDOM;
+
+    // A função checkAuth() vem do auth.js e já deve estar no escopo global
     const [isAuthenticated, setIsAuthenticated] = useState(checkAuth());
 
-    // A função `login` (usada em LoginPage) deve atualizar o estado ou recarregar a página
     const handleLogin = () => {
         setIsAuthenticated(true);
     };
 
     return (
         <Router>
-            {/* Header agora está definido globalmente */}
+            {/* O componente Header já foi carregado globalmente */}
             <Header />
             <main className="container my-4">
                 <Routes>
@@ -57,5 +57,6 @@ function App() {
     );
 }
 
-// Renderiza a aplicação na div #root
+// Renderiza a aplicação na div #root.
+// O ReactDOM já deve estar disponível globalmente neste ponto.
 ReactDOM.render(<App />, document.getElementById('root'));
