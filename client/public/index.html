@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARQv20</title>
-    <!-- Link para o CSS (path relativo) -->
+    <!-- O CSS permanece no head para carregar os estilos prioritariamente -->
     <link rel="stylesheet" href="src/styles/main.css">
-    <!-- Dependências do React e React Router -->
-    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js" crossorigin></script>
-    <!-- Babel para transpilar JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <noscript>Você precisa habilitar o JavaScript para rodar esta aplicação.</noscript>
     <div id="root"></div>
 
-    <!--
-      Carregando todos os scripts como "text/babel" com paths relativos.
-      O Babel vai transpilar e executar.
-      A ordem é importante: componentes e páginas primeiro, depois o App.js.
-      Esta abordagem não usa imports/exports, mas sim declarações globais.
-    -->
+    <!-- Todos os scripts foram movidos para o final do body -->
+    <!-- Isso garante a ordem correta de carregamento e evita erros de "undefined" -->
+
+    <!-- 1. Dependências de bibliotecas -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js" crossorigin></script>
+    
+    <!-- 2. Babel para transpilar JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 3. Scripts da sua aplicação (componentes, páginas, utils) -->
     <script type="text/babel" src="src/utils/auth.js"></script>
     <script type="text/babel" src="src/components/Alert.js"></script>
     <script type="text/babel" src="src/components/LoadingSpinner.js"></script>
@@ -36,7 +36,7 @@
     <script type="text/babel" src="src/pages/HistoryPage.js"></script>
     <script type="text/babel" src="src/pages/NotFoundPage.js"></script>
 
-    <!-- O App.js é o último, pois ele depende dos outros -->
+    <!-- 4. O App.js é o último, pois ele depende de todos os outros e renderiza a aplicação -->
     <script type="text/babel" src="src/App.js"></script>
 </body>
 </html>
