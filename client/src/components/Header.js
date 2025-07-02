@@ -1,102 +1,40 @@
-// Componente Header
-const Header = () => {
-    const [user, setUser] = React.useState(authManager.getUser());
+// Não precisa de import React se ele estiver global
+// Não usar 'export default' na abordagem de scripts globais
 
-    React.useEffect(() => {
-        const handleAuthChange = (newUser) => {
-            setUser(newUser);
-        };
+function Header() {
+    // Supondo que ReactRouterDOM está global
+    const { Link, useNavigate } = ReactRouterDOM;
+    // Supondo que as funções de auth estão globais
+    const isAuthenticated = checkAuth(); 
+    const navigate = useNavigate();
 
-        authManager.addListener(handleAuthChange);
-        return () => authManager.removeListener(handleAuthChange);
-    }, []);
-
-    const handleLogout = async () => {
-        await authManager.logout();
-        router.navigate('/');
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+        // Forçar recarregamento para atualizar o estado da aplicação
+        window.location.reload();
     };
 
-    return React.createElement('header', { className: 'header' },
-        React.createElement('div', { className: 'container' },
-            React.createElement('a', { 
-                href: '#/', 
-                className: 'logo',
-                onClick: (e) => {
-                    e.preventDefault();
-                    router.navigate('/');
-                }
-            }, 'ARQ6'),
-            
-            React.createElement('nav', { className: 'nav' },
-                user ? [
-                    React.createElement('a', {
-                        key: 'dashboard',
-                        href: '#/dashboard',
-                        className: 'nav-link',
-                        onClick: (e) => {
-                            e.preventDefault();
-                            router.navigate('/dashboard');
-                        }
-                    }, 'Dashboard'),
-                    
-                    React.createElement('a', {
-                        key: 'analysis',
-                        href: '#/analysis',
-                        className: 'nav-link',
-                        onClick: (e) => {
-                            e.preventDefault();
-                            router.navigate('/analysis');
-                        }
-                    }, 'Nova Análise'),
-                    
-                    React.createElement('a', {
-                        key: 'history',
-                        href: '#/history',
-                        className: 'nav-link',
-                        onClick: (e) => {
-                            e.preventDefault();
-                            router.navigate('/history');
-                        }
-                    }, 'Histórico'),
-                    
-                    React.createElement('div', { 
-                        key: 'user-menu',
-                        className: 'flex items-center gap-4' 
-                    },
-                        React.createElement('span', { 
-                            className: 'text-sm text-gray-600' 
-                        }, `Olá, ${user.nome}`),
-                        
-                        React.createElement('button', {
-                            className: 'btn btn-secondary btn-sm',
-                            onClick: handleLogout
-                        }, 'Sair')
-                    )
-                ] : [
-                    React.createElement('a', {
-                        key: 'login',
-                        href: '#/login',
-                        className: 'nav-link',
-                        onClick: (e) => {
-                            e.preventDefault();
-                            router.navigate('/login');
-                        }
-                    }, 'Entrar'),
-                    
-                    React.createElement('a', {
-                        key: 'register',
-                        href: '#/register',
-                        className: 'btn btn-primary btn-sm',
-                        onClick: (e) => {
-                            e.preventDefault();
-                            router.navigate('/register');
-                        }
-                    }, 'Cadastrar')
-                ]
-            )
-        )
+    return (
+        <header className="bg-dark text-white p-3">
+            <nav className="container d-flex justify-content-between align-items-center">
+                <Link to="/" className="navbar-brand text-white fs-4">ARQv20</Link>
+                <div>
+                    {isAuthenticated ? (
+                        <>
+                            <Link to="/dashboard" className="btn btn-outline-light me-2">Dashboard</Link>
+                            <Link to="/analysis" className="btn btn-outline-light me-2">Análise</Link>
+                            <Link to="/history" className="btn btn-outline-light me-2">Histórico</Link>
+                            <button onClick={handleLogout} className="btn btn-danger">Sair</button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className="btn btn-outline-light me-2">Login</Link>
+                            <Link to="/register" className="btn btn-primary">Registrar</Link>
+                        </>
+                    )}
+                </div>
+            </nav>
+        </header>
     );
-};
-
-window.Header = Header;
-
+}
