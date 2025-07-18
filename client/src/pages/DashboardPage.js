@@ -5,6 +5,7 @@ const DashboardPage = () => {
     const [recentAnalyses, setRecentAnalyses] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState('');
+    const [aiStatus, setAiStatus] = React.useState(null);
 
     React.useEffect(() => {
         // Verificar autenticação
@@ -13,6 +14,9 @@ const DashboardPage = () => {
         }
 
         loadDashboardData();
+
+        // Carregar status da AI
+        loadAIStatus();
 
         const handleAuthChange = (newUser) => {
             setUser(newUser);
@@ -24,6 +28,17 @@ const DashboardPage = () => {
         authManager.addListener(handleAuthChange);
         return () => authManager.removeListener(handleAuthChange);
     }, []);
+
+    const loadAIStatus = async () => {
+        try {
+            const response = await apiService.getAIStatus();
+            if (response.success) {
+                setAiStatus(response.data);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar status AI:', error);
+        }
+    };
 
     const loadDashboardData = async () => {
         try {
@@ -118,6 +133,32 @@ const DashboardPage = () => {
                         className: 'btn btn-secondary',
                         onClick: () => router.navigate('/history')
                     }, 'Ver Histórico Completo')
+                )
+            ),
+
+            // AI Status Card
+            aiStatus && React.createElement('div', { className: 'card p-6 mb-8' },
+                React.createElement('h2', { 
+                    className: 'text-xl font-semibold mb-4' 
+                }, 'Status da IA'),
+                React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' },
+                    React.createElement('div', null,
+                        React.createElement('p', { className: 'text-sm text-gray-600 mb-2' }, 
+                            `Provedor atual: ${aiStatus.current}`
+                        ),
+                        React.createElement('div', { className: 'flex gap-2' },
+                            React.createElement('span', { 
+                                className: `px-2 py-1 rounded text-xs ${
+                                    aiStatus.status.gemini === 'online' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`
+                            }, `Gemini: ${aiStatus.status.gemini}`),
+                            React.createElement('span', { 
+                                className: `px-2 py-1 rounded text-xs ${
+                                    aiStatus.status.deepseek === 'online' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`
+                            }, `DeepSeek: ${aiStatus.status.deepseek}`)
+                        )
+                    )
                 )
             ),
 

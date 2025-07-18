@@ -128,6 +128,18 @@ class ApiService {
         return this.request('/api/analysis/stats/overview');
     }
 
+    // AI Provider methods
+    async getAIStatus() {
+        return this.request('/api/analysis/ai/status');
+    }
+
+    async setAIProvider(provider) {
+        return this.request('/api/analysis/ai/provider', {
+            method: 'POST',
+            data: { provider }
+        });
+    }
+
     // Health check
     async healthCheck() {
         return this.request('/health');

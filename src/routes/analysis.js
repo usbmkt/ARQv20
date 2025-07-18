@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const geminiService = require('../services/geminiService');
+const aiService = require('../services/aiService');
 const { supabase } = require('../config/database');
 const { validateAnalysisRequest } = require('../middleware/validation');
 const rateLimit = require('express-rate-limit');
@@ -75,7 +75,7 @@ router.post('/market', analysisLimiter, authenticate, validateAnalysisRequest, a
     };
 
     // Realizar análise com Gemini
-    const analysisResult = await geminiService.analyzeMarket(analysisContext);
+    const analysisResult = await aiService.analyzeMarket(analysisContext);
 
     // Salvar análise no banco de dados
     const { data: savedAnalysis, error: saveError } = await supabase
@@ -283,6 +283,73 @@ router.get('/stats/overview', authenticate, async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Erro ao buscar estatísticas',
+      message: error.message
+    });
+  }
+});
+
+// GET /api/analysis/ai/status - Status dos provedores AI
+router.get('/ai/status', async (req, res) => {
+  try {
+    const providerInfo = aiService.getProviderInfo();
+    const connections = await aiService.testConnections();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...providerInfo,
+        connections,
+        status: {
+          gemini: providerInfo.hasGeminiKey && connections.gemini ? 'online' : 'offline',
+          deepseek: providerInfo.hasDeepSeekKey && connections.deepseek ? 'online' : 'offline'
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao verificar status AI:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao verificar status dos provedores AI',
+      message: error.message
+    });
+  }
+});
+
+// POST /api/analysis/ai/provider - Alterar provedor AI
+router.post('/ai/provider', authenticate, async (req, res) => {
+  try {
+    const { provider } = req.body;
+    
+    if (!provider) {
+      return res.status(400).json({
+        success: false,
+        error: 'Provedor é obrigatório',
+        message: 'Informe o provedor: gemini, deepseek ou both'
+      });
+    }
+
+    const success = aiService.setProvider(provider);
+    
+    if (success) {
+      res.status(200).json({
+        success: true,
+        data: {
+          provider: aiService.getProviderInfo().current
+        },
+        message: `Provedor alterado para: ${provider}`
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: 'Provedor inválido',
+        message: 'Provedores disponíveis: gemini, deepseek, both'
+      });
+    }
+  } catch (error) {
+    console.error('Erro ao alterar provedor:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao alterar provedor AI',
       message: error.message
     });
   }

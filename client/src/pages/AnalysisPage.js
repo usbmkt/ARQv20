@@ -147,7 +147,22 @@ const AnalysisPage = () => {
                             React.createElement('div', { 
                                 className: 'whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200',
                                 style: { fontFamily: 'inherit', lineHeight: 1.6 }
-                            }, result.resultado)
+                            }, result.resultado || result.analysis)
+                        ),
+                        
+                        // Mostrar informações do provedor AI se disponível
+                        result.metadata && React.createElement('div', { className: 'mb-4 text-sm text-gray-600' },
+                            React.createElement('div', { className: 'flex gap-4' },
+                                result.metadata.provider && React.createElement('span', null, 
+                                    `Provedor: ${result.metadata.provider}`
+                                ),
+                                result.metadata.model && React.createElement('span', null, 
+                                    `Modelo: ${result.metadata.model}`
+                                ),
+                                result.metadata.processingTimeMs && React.createElement('span', null, 
+                                    `Tempo: ${(result.metadata.processingTimeMs / 1000).toFixed(1)}s`
+                                )
+                            )
                         ),
                         
                         React.createElement('div', { className: 'flex justify-between mt-6' },
@@ -220,4 +235,3 @@ const AnalysisPage = () => {
 };
 
 window.AnalysisPage = AnalysisPage;
-
